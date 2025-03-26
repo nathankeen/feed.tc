@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latest Atom Feed Entry</title>
     <style>
-        {
+        body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
@@ -30,20 +30,14 @@
     <script>
         async function fetchFeed() {
             const response = await fetch('/feed');
-            const text = await response.text();
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(text, 'application/xml');
-            const latestEntry = xmlDoc.getElementsByTagName('entry')[0];
-            const feedContainer = document.getElementById('feed-container');
+           .getElementById('feed-container');
 
-            if (latestEntry) {
-                const title = latestEntry.getElementsByTagName('title')[0].textContent;
-                const link = latestEntry.getElementsByTagName('link')[0].getAttribute('href');
+            if (data.title && data.link) {
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'feed-item';
                 itemDiv.innerHTML = `
-                    <div class="feed-title">${title}</div>
-                    <a class="feed-link" href="${link}" target="_blank">${link}</a>
+                    <div class="feed-title">${data.title}</div>
+                    <a class="feed-link" href="${data.link}" target="_blank">${data.link}</a>
                 `;
                 feedContainer.appendChild(itemDiv);
             } else {
