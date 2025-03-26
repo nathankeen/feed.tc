@@ -1,46 +1,29 @@
 const express = require('express');
-const fetch = require('node-fetch');
-const FeedParser = require('feedparser');
+const axios = require('axios');
+const xml2js = require('xml2js');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.static('public'));
 
 app.get('/feed', async (req, res) => {
     try {
-        const response = await fetch('https://theconversation.com/feeds/nz/tonic-media-network/articles.atom');
-        if (response.ok) {
-            const feedparser = new FeedParser();
-            response.body.pipe(feedparser);
-
-            let latestEntry = null;
-            feedparser.on('readable', function () {
-                const stream = this;
-                const item = stream.read();
-                if (item && !latestEntry) {
-                    latestEntry = item;
-                }
-            });
-
-            feedparser.on('end', function () {
-                if (latestEntry) {
-                    res.json({
-                        title: latestEntry.title,
-                        link: latestEntry.link,
-                    });
-                } else {
-                    res.status(404).send('No entries found');
-                }
-            });
-
-            feedparser.on('error', function (error) {
-                console.error('Error parsing feed:', error);
-                res.status(500).send('Error parsing feed');
-            });
-        } else {
-            console.error('Error fetching feed:', response.status);
-            res.status(response.status).send('Error fetching feed');
-        }
+        const response = await axios.get('https://theconversation.com/feeds/nz/tonic-media-network/articles.atom');
+        const xml = response.data;
+        xml2js.parseString(xml, (err, result) => {
+            if (err) {
+                console.error('Error parsing XML:', err);
+                return res.status(500).send('Error parsing feed');
+            }
+            const latestEntry = result.feed.entry[0];
+            if (latestEntry) {
+                const title = latestEntry.title[0];
+                const link = latestEntry.link[0].$.href;
+                res.json({ title, link });
+            } else {
+                res.status(404).send('No entries found');
+            }
+        });
     } catch (error) {
         console.error('Error fetching feed:', error.message);
         res.status(500).send('Error fetching feed');
