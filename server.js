@@ -9,6 +9,9 @@ app.get('/get-feed', async (req, res) => {
         // Fetch the Atom feed from the URL
         const response = await axios.get('https://theconversation.com/feeds/nz/tonic-media-network/articles.atom');
 
+        // Debugging: Log the raw feed content to the terminal
+        console.log("Raw Feed Data:", response.data);
+
         // Send the raw feed XML as the response
         res.set('Content-Type', 'application/xml');  // Set the response type to XML
         res.send(response.data);
@@ -23,5 +26,5 @@ app.use(express.static('public'));
 
 // Start the server
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running at http://tc-atom-app-f3k6o.ondigitalocean.app:${port}`);
 });
