@@ -32,18 +32,18 @@
     <script>
 async function fetchFeed() {
     try {
-        // Fetch the feed from the server
-        const response = await fetch('/get-feed');
-        const text = await response.text();
+        // Change 'localhost' to your server URL
+        const response = await fetch('https://tc-atom-app-f3k6o.ondigitalocean.app/get-feed');
         
-        // Log the raw XML content to the console
-        console.log("Raw Feed XML:", text);
+        // Debugging: Log the fetched feed
+        const text = await response.text();
+        console.log("Fetched Feed Data:", text);  // Check what is being fetched from the server
 
-        // Parse the XML feed
+        // Parse the XML data
         const parser = new DOMParser();
         const xml = parser.parseFromString(text, "application/xml");
 
-        // Check for any parsing errors
+        // Check if there are any XML parsing errors
         const errorNode = xml.querySelector('parsererror');
         if (errorNode) {
             console.error('Error parsing XML:', errorNode);
@@ -51,14 +51,14 @@ async function fetchFeed() {
             return;
         }
 
-        // Get the first <entry> from the Atom feed
+        // Extract the first article (entry) from the Atom feed
         const entry = xml.querySelector("entry");
         if (!entry) {
             document.getElementById("feed").innerHTML = "<p>No articles available.</p>";
             return;
         }
 
-        // Extract title, link, and summary
+        // Extract details like title, link, and summary
         const title = entry.querySelector("title").textContent;
         const link = entry.querySelector("link").getAttribute("href");
         const summary = entry.querySelector("summary")?.textContent || "No summary available.";
@@ -69,7 +69,7 @@ async function fetchFeed() {
             media = mediaElements[0].getAttribute("url");
         }
 
-        // Create the article element to display
+        // Create an article element and add it to the page
         const article = document.createElement("div");
         article.classList.add("article");
         article.innerHTML = `
@@ -78,13 +78,16 @@ async function fetchFeed() {
             ${media ? `<img src="${media}" alt="Article Image">` : ""}
         `;
         document.getElementById("feed").appendChild(article);
+
     } catch (error) {
         console.error("Error fetching the feed:", error);
         document.getElementById("feed").innerHTML = "<p>Failed to load feed.</p>";
     }
 }
-        
-        fetchFeed();
-    </script>
+</script>
+
+// Call the function when the page loads
+fetchFeed();
+
 </body>
 </html>
