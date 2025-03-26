@@ -19,7 +19,8 @@ app.get('/feed', async (req, res) => {
             if (latestEntry) {
                 const title = latestEntry.title[0];
                 const link = latestEntry.link[0].$.href;
-                res.json({ title, link });
+                const content = latestEntry.content[0];
+                res.json({ title, link, content });
             } else {
                 res.status(404).json({ error: 'No entries found' });
             }
