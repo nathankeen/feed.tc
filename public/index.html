@@ -21,26 +21,32 @@
             color: #1a0dab;
             text-decoration: none;
         }
+        .feed-content {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <h1>Latest Atom Feed Entry from The Conversation</h1>
+    <div id="feed-container"></div>
+
     <script>
         async function fetchFeed() {
             try {
                 const response = await fetch('/feed');
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    response was not ok');
                 }
                 const data = await response.json();
                 const feedContainer = document.getElementById('feed-container');
 
-                if (data.title && data.link) {
+                if (data.title && data.link && data.content) {
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'feed-item';
                     itemDiv.innerHTML = `
                         <div class="feed-title">${data.title}</div>
                         <a class="feed-link" href="${data.link}" target="_blank">${data.link}</a>
+                        <div class="feed-content">${data.content}</div>
                     `;
                     feedContainer.appendChild(itemDiv);
                 } else {
