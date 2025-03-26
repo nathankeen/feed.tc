@@ -1,18 +1,16 @@
-const express = require("express");
-const axios = require("axios");
+const express = require('express');
+const axios = require('axios');
 const app = express();
 const port = 3000;
 
-app.get("/get-feed", async (req, res) => {
+// Route to fetch the Atom feed and return it
+app.get('/get-feed', async (req, res) => {
     try {
-        // Fetch the Atom feed using axios
-        const response = await axios.get('https://theconversation.com/feeds/nz/tonic-media-network/articles.atom', {
-            headers: {
-                'Content-Type': 'application/xml',
-            }
-        });
-        
-        // Return the feed data as raw text
+        // Fetch the Atom feed from the URL
+        const response = await axios.get('https://theconversation.com/feeds/nz/tonic-media-network/articles.atom');
+
+        // Send the raw feed XML as the response
+        res.set('Content-Type', 'application/xml');  // Set the response type to XML
         res.send(response.data);
     } catch (error) {
         console.error("Error fetching the feed:", error);
@@ -20,8 +18,10 @@ app.get("/get-feed", async (req, res) => {
     }
 });
 
-app.use(express.static('public')); // Serve static files (HTML, CSS, JS)
+// Serve static files (HTML, CSS, JS)
+app.use(express.static('public'));
 
+// Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
