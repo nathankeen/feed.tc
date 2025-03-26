@@ -30,7 +30,8 @@
     <script>
         async function fetchFeed() {
             const response = await fetch('/feed');
-           .getElementById('feed-container');
+            const data = await response.json();
+            const feedContainer = document.getElementById('feed-container');
 
             if (data.title && data.link) {
                 const itemDiv = document.createElement('div');
